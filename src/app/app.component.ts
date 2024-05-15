@@ -17,7 +17,7 @@ interface Option {
   selector: "app-button-selector",
   standalone: true,
   template: `
-    @for (option of options; track option.value) {
+    @for (option of options(); track option.value) {
     <button
       [disabled]="isDisabled()"
       [ngClass]="{ selected: selectedOption()?.value === option.value }"
@@ -44,10 +44,10 @@ interface Option {
 export class ButtonSelector implements ControlValueAccessor {
   selectedOption = signal<Option | null>(null);
 
-  options: Option[] = [
+  options = signal<Option[]>([
     { label: "Opção 1", value: "1" },
     { label: "Opção 2", value: "2" },
-  ];
+  ]);
 
   isDisabled = signal<boolean>(false);
 
@@ -56,7 +56,7 @@ export class ButtonSelector implements ControlValueAccessor {
 
   writeValue(optionValue: any): void {
     if (optionValue) {
-      const option = this.options.find(
+      const option = this.options().find(
         (option) => option.value === optionValue
       );
 
@@ -76,7 +76,7 @@ export class ButtonSelector implements ControlValueAccessor {
   }
 
   onSelect(option: Option) {
-    if(this.selectedOption()?.value === option.value) {
+    if (this.selectedOption()?.value === option.value) {
       return;
     }
 
